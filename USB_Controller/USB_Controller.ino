@@ -12,7 +12,6 @@ int XMO = 13;
 int YMO = 11;
 int RMO = 12;
 int ZMO = 10;
-
  
 void setup() 
 {
@@ -40,6 +39,7 @@ void Joysticks()
       Serial.print(PS3.getAnalogHat(LeftHatX));
       Serial.print(F("\nLeftHatY:"));
       Serial.print(PS3.getAnalogHat(LeftHatY));
+      analogWrite(6,PS3.getAnalogHat(LeftHatY));
    }
      if (PS3.getAnalogHat(RightHatX) > 137 || PS3.getAnalogHat(RightHatX) < 117 || PS3.getAnalogHat(RightHatY) > 137 || PS3.getAnalogHat(RightHatY) < 117) {
         Serial.print(F("\nRightHatX: "));
@@ -61,10 +61,7 @@ void Buttons()
     }
     if (PS3.getButtonClick(TRIANGLE))
     {
-     Serial.print(F("\r\nTraingle: "));
-     digitalWrite(YMO, HIGH);   // turn the LED on (HIGH is the voltage level)
-     delay(10);              // wait for a second
-     digitalWrite(YMO, LOW);    // turn the LED off by making the voltage LOW 
+     Serial.print(F("\r\nTraingle: ")); 
     }   
     if (PS3.getButtonClick(CIRCLE))
     {
@@ -120,15 +117,24 @@ void Buttons()
      Serial.print(F("\r\nR2")); 
     }
 }
-
-void LED(int O)
+void tilt()
 {
-  
+    if (PS3.getAngle(Pitch) > 200|| PS3.getAngle(Pitch) < 160) 
+    {
+      Serial.print(F("\r\nPitch: "));
+      Serial.print(PS3.getAngle(Pitch));
+    }
+    if (PS3.getAngle(Roll) > 200|| PS3.getAngle(Roll) < 160) 
+    {
+      Serial.print(F("\r\nPitch: "));
+      Serial.print(PS3.getAngle(Roll));
+    }
 }
 void loop()
 {
   Usb.Task();
    Joysticks();
    Buttons();
+   tilt();
 }
 
