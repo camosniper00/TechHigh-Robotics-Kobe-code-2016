@@ -1,10 +1,13 @@
 
+
 #include <PS3USB.h>
 #ifdef dobogusinclude
 #include <spi4teensy3.h>
 #include <SPI.h>
 #endif
-
+#include <Servo.h> // Servo Values
+Servo myservo;//0: Full Forward 90: Full Stop 180: Full Reverse.
+// ***!!!MOTORS WILL NOT FUNCTION IF OUT OF THE RANGE!!!***
 USB Usb;
 PS3USB PS3(&Usb);
 //Initialize varibles to be used for PWM output pins
@@ -27,10 +30,13 @@ void setup()
     while (1); //halt
   }
   Serial.print(" \nPS3 USB Library Started. ");
+  //take button input and print to serial monitor
+  myservo.attach(14);
+  //Using PWM pin 14 to control Sabertooth via PS3 Control
+  // take JoyStick input and out put them to the serial monitor
 
 }
-
-// take JoyStick input and out put them to the serial monitor
+  
 void Joysticks()
 {
 //only update values if outside the dead zone
@@ -40,6 +46,7 @@ void Joysticks()
     Serial.print(F("\nLeftHatY:"));
     Serial.print(PS3.getAnalogHat(LeftHatY));
     analogWrite(6, PS3.getAnalogHat(LeftHatY));
+    
   }
   if (PS3.getAnalogHat(RightHatX) > 137 || PS3.getAnalogHat(RightHatX) < 117 || PS3.getAnalogHat(RightHatY) > 137 || PS3.getAnalogHat(RightHatY) < 117) {
     Serial.print(F("\nRightHatX: "));
@@ -51,7 +58,8 @@ void Joysticks()
 }
 
 
-//take button input and print to serial monitor
+
+
 void Buttons()
 {
 //Only update if the button is pressed
@@ -132,10 +140,30 @@ void tilt()
     Serial.print(PS3.getAngle(Roll));
   }
 }
+void controlForward()
+{
+  while (PS3.getAnalogHat(LeftHatX) < 117 && PS3.getAnalogHat(LeftHatX) >= 59){ //One half full forward.
+    myservo.write(60);
+    
+    }
+  while (PS3.getAnalogHat(LeftHatX) <= 58 && PS3.getAnalogHat(LeftHatX) >=0){ //full forward.
+    myservo.write(30);
+  
+    }
+  while (PS3.getAnalogHat(LeftHatX) <= 196&& PS3.getAnalogHat(LeftHatX) > 137){ //One half reverse.
+    myservo.write(76);
+    
+    }
+  while (PS3.getAnalogHat(LeftHatX) <= 255 && PS3.getAnalogHat(LeftHatX) >= 197){ //full reverse.
+    myservo.write(160);
+ 
+    }
+  }
 //call alll of the functions in a never ending loop
 void loop()
 {
   Usb.Task();
+  controlForward();
   Joysticks();
   Buttons();
   tilt();
