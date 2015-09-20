@@ -1,5 +1,5 @@
 # Kobe-Bot Control Code
-Fork of Kobe's Code for my own use
+Tech High Robotics 2016 Navigator Code
 
 Controller code for possible use of Arduino to control robot
 
